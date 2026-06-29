@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connecting TikTok – Vua Thao Duoc Automation</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 16px;
+      padding: 48px 56px;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+    }
+    .logo { font-size: 1rem; color: #888; margin-bottom: 32px; }
+    .logo span { color: #fe2c55; font-weight: 700; }
+    .icon { font-size: 3rem; margin-bottom: 16px; }
+    h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+    p { font-size: 0.9rem; color: #888; margin-bottom: 24px; line-height: 1.6; }
+    .code-box {
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #4ade80;
+      word-break: break-all;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+    .btn {
+      display: inline-block;
+      background: #fe2c55;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      margin-top: 8px;
+    }
+    .btn:hover { background: #e0183d; }
+    .error { color: #f87171; }
+    .success { color: #4ade80; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Vua Thao Duoc <span>Automation</span></div>
+  <div id="content">
+    <div class="icon">⏳</div>
+    <h1>Đang xử lý...</h1>
+    <p>Đang nhận authorization code từ TikTok</p>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code   = params.get('code');
+  const error  = params.get('error');
+  const state  = params.get('state');
+  const el     = document.getElementById('content');
+
+  if (error) {
+    el.innerHTML = `
+      <div class="icon">❌</div>
+      <h1 class="error">Đã xảy ra lỗi</h1>
+      <p class="error">Lỗi: <strong>${error}</strong></p>
+      <p>Vui lòng thử lại.</p>
+      <button class="btn" onclick="window.location.href='/'">Quay lại</button>
+    `;
+  } else if (code) {
+    el.innerHTML = `
+      <div class="icon">✅</div>
+      <h1 class="success">Kết nối thành công!</h1>
+      <p>TikTok đã cấp authorization code. Copy code bên dưới để dùng trong workflow:</p>
+      <div class="code-box" id="code-display">${code}</div>
+      <button class="btn" onclick="copyCode()">Copy Code</button>
+      <p style="margin-top:16px;font-size:0.8rem;color:#555">State: ${state || 'N/A'}</p>
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="icon">⚠️</div>
+      <h1>Không có dữ liệu</h1>
+      <p>Không nhận được code từ TikTok. Hãy thử kết nối lại.</p>
+      <button class="btn" onclick="window.location.href='/'">Quay lại</button>
+    `;
+  }
+
+  function copyCode() {
+    const code = document.getElementById('code-display').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      alert('Đã copy code!');
+    });
+  }
+</script>
+</body>
+</html>
